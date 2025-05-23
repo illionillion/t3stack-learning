@@ -25,6 +25,12 @@ export function LatestPost() {
     },
   });
 
+  const deletePost = api.post.delete.useMutation({
+    onSuccess: async () => {
+      await utils.post.invalidate();
+    },
+  });
+
   return (
     <div className="w-full max-w-xs">
       <h2>All posts</h2>
@@ -32,9 +38,13 @@ export function LatestPost() {
         {allPosts?.map((post) => (
           <li
             key={post.id}
-            className="rounded-full bg-white/10 px-4 py-2 text-white"
+            className="rounded-full flex justify-between bg-white/10 px-4 py-2"
           >
-            {post.name}
+            <p className="text-white">{post.name}</p>
+            <button className="ml-2 rounded-full bg-red-500 px-2 py-1 text-sm text-white transition hover:bg-red-600"
+              onClick={() => deletePost.mutate({ id: post.id })}
+              disabled={deletePost.isPending}
+            >削除</button>
           </li>
         ))}
       </ul>
