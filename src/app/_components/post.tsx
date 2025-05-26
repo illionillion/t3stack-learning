@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
 import { api } from "~/trpc/react";
 
@@ -31,6 +31,12 @@ export function LatestPost() {
     },
   });
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    createPost.mutate({ name });
+    setName("");
+  };
+
   return (
     <div className="w-full max-w-xs">
       <h2>All posts</h2>
@@ -55,10 +61,7 @@ export function LatestPost() {
         <p>You have no posts yet.</p>
       )}
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          createPost.mutate({ name });
-        }}
+        onSubmit={handleSubmit}
         className="flex flex-col gap-2"
       >
         <input
