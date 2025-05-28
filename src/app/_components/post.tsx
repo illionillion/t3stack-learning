@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 
 import { api } from "~/trpc/react";
 
@@ -34,7 +34,14 @@ export function LatestPost() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     createPost.mutate({ name });
-    setName("");
+  };
+
+  const handleDelete = (id: number) => {
+    deletePost.mutate({ id });
+  };
+
+  const changeName = (e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
   };
 
   return (
@@ -48,7 +55,7 @@ export function LatestPost() {
           >
             <p className="text-white">{post.name}</p>
             <button className="ml-2 rounded-full bg-red-500 px-2 py-1 text-sm text-white transition hover:bg-red-600"
-              onClick={() => deletePost.mutate({ id: post.id })}
+              onClick={() => handleDelete(post.id)}
               disabled={deletePost.isPending}
             >削除</button>
           </li>
@@ -68,8 +75,10 @@ export function LatestPost() {
           type="text"
           placeholder="Title"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={changeName}
           className="w-full rounded-full bg-white/10 px-4 py-2 text-white"
+          required
+          disabled={createPost.isPending}
         />
         <button
           type="submit"
